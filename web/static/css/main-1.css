@@ -1,0 +1,65 @@
+img-Logo{
+  height: 70px;
+  width: 88px;
+  margin:"5px";
+  padding:"10px";
+}
+
+row.header-row{
+height: 100px;
+/*  width: 1200px; */
+  margin: 0px;
+  padding: 0px;
+}
+
+.header-logo{
+  width: 100px;
+  margin: 0px;
+  padding: 0px;
+}
+
+.header-title{
+  width: 1000px;
+  margin: 0px;
+  padding: 0px;
+}
+/* Style the header */
+h1{
+    background-color: #6A5ACD;
+    font-size: 50px;
+    color: #ffffff;
+    text-align: center;
+    padding:"10px";
+}
+
+/* Style the Body Elements */
+.holder {
+  display: inline;
+}
+
+.holder img {
+  max-height: 150px;
+  max-width: 150px;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+.main-menu-row row{
+  height: 250px;
+  width: 1000px;
+  margin-left: 50px;
+}
+
+.main-menu-col column{
+  width: 200px;
+  height: 200px;
+  align-content: center;
+}
+
+.main-menu-col:hover{
+  background-color: #f4f4f4;
+  border-bottom-style: solid;
+  border-bottom-color: blue;
+}

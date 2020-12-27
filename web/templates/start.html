@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div>
+  <div id="main-menu">
+    <div class="row">
+      <div class="main-menu-item" id="mDefine">
+        <div id="iDefine"> <img src="{{url_for('static', filename='images/Define.png')}}"></div>
+        <div id="ldefine"><p> Define </p></div>
+      </div>
+      <div class="main-menu-item" id="mConnect" >
+        <div id="iConnect"> <img src="{{url_for('static', filename='images/Connect.png')}}"></div>
+        <div id="lConnect"><p> Connect </p></div>
+      </div>
+      <div class="main-menu-item" id="mMonitor" >
+        <div id="iMonitor"> <img src="{{url_for('static', filename='images/Monitor.jpeg')}}"></div>
+        <div id="lMonitor"><p> Monitor </p></div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="main-menu-item" id="mManage">
+        <div id="iManage"> <img src="{{url_for('static', filename='images/Manage.jpeg')}}"> </div>
+        <div id="lManage"><p> Manage </p></div>
+      </div>
+      <div  class="main-menu-item" id="mAnalyze">
+        <div id="iAnalyze"> <img src="{{url_for('static', filename='images/Analyze.jpg')}}"> </div>
+        <div id="lAnalyze"><p> Analyze </p></div>
+      </div>
+      <div  class="main-menu-item" id="mMonetize">
+        <div id="iMonetize"> <img src="{{url_for('static', filename='images/Monetize.png')}}"> </div>
+        <div id="lMonetize"><p> Monetize </p></div>
+      </div>
+     </div>
+   </div>
+  </div>
+{% endblock %}

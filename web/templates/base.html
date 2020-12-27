@@ -1,0 +1,43 @@
+<html>
+    <head>
+      {% if title %}
+        <title>{{ title }} - IoT Portal </title>
+      {% else %}
+        <title> IoT Portal </title>
+      {% endif %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/Chart.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-3.1.0.js') }}"></script>
+    </head>
+    <body>
+      <div id="header-main">
+          <img src="{{url_for('static', filename='images/Logo.png')}}">
+          <h1> Edge Visualization Platform </h1>
+      </div>
+      <div>
+        <nav id="site-menu">
+          <div class="container">
+            <ul>
+              <li><a href="{{ url_for('login') }}">Home</a></li>
+              <li><a href="{{ url_for('dboard') }}">Dashboard</a></li>
+              <li><a href="{{ url_for('login') }}">Logout</a></li>
+            </ul>
+          </div>
+        </nav>
+       </div>
+      <hr>
+      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+      <ul>
+        {% for message in messages %}
+        <li> {{message}}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+      {% endwith %}
+      {% block content %} {% endblock %}
+    </body>
+</html>
+

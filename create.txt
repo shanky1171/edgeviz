@@ -1,0 +1,21 @@
+create table cities (name varchar(80),location point);
+INSERT INTO cities VALUES ('San Francisco', '(-194.0, 53.0)');
+sudo docker volume inspect edgviz_postgres
+sudo docker rmi $(sudo docker images -f dangling=true -q)
+nameserver 8.8.8.8
+nameserver 8.8.4.4
+nameserver 127.0.0.53
+options edns0
+sudo docker exec -it edgviz_mongodb_1 mongo -u edgedbuser -p edgedb --authenticationDatabase edgedb
+sudo docker exec -it edgviz_mongodb_1 mongo
+db.createUser({user: 'edgedbuser', pwd: 'edgedb', roles: [{role: 'readWrite', db: 'edgedb'}]})
+mongo -u edgedbuser -p edgedb --authenticationDatabase edgedb
+db.user.insertOne( { name: "shanky0", email: "sh@test123"})
+db.user.find({})
+
+sudo docker-compose stop web
+sudo docker-compose rm 
+sudo docker-compose build web
+sudo docker-compose up -d 
+
+

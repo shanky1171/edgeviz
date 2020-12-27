@@ -1,0 +1,48 @@
+version: '3'
+
+services:
+  web:
+    restart: always
+    build: ./web
+    expose:
+      - "8000"
+    links:
+      - mongodb:mongodb
+    volumes:
+      - web-data:/usr/src/app/static
+    env_file:
+      - .env
+    command: /usr/local/bin/gunicorn --access-logfile - --error-logfile - --log-level debug -w 2 -b :8000 app:app
+    #command: flask run --host=0.0.0.0 --port=8000
+
+  nginx:
+    restart: always
+    build: ./nginx
+    ports:
+      - "80:80"
+    volumes:
+      - .:/www/static
+      - web-data:/usr/src/app/static
+    links:
+      - web:web
+
+  mongodb:
+    image: mongo:4.0.8
+    restart: unless-stopped
+    command: mongod --auth
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongodbuser
+      MONGO_INITDB_ROOT_PASSWORD: mdb_user
+      MONGO_INITDB_DATABASE: edgedb
+      MONGODB_DATA_DIR: /data/db
+      MONDODB_LOG_DIR: /dev/null
+    volumes:
+      - mongodbdata:/data/db
+    ports:
+      - "27017:27017"
+#    networks:
+#      - backend
+
+volumes:
+  web-data:
+  mongodbdata:
