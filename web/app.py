@@ -3,12 +3,13 @@
 
 from flask import Flask
 from flask import request, render_template, flash, redirect, url_for, json, jsonify
-import json
 from random import sample
 from flask_sqlalchemy import SQLAlchemy
 from config import BaseConfig
 from flask_mongoengine import MongoEngine
 import logging
+import json
+import requests
 
 app = Flask(__name__)
 app.config.from_object(BaseConfig)
@@ -100,6 +101,20 @@ def pdata():
             print(f'DeviceID:{presrec.deviceId} Humidity:{presrec.pressure} Timestamp:{presrec.ts}')
         presrecs = Tsdata.objects(deviceId=1).only('pressure','ts')
         return jsonify({'presrecs':presrecs})
+
+@app.route('/tsdataput', methods=['GET', 'POST'])
+def tsdataput():
+        req_data = request.get_json()
+
+        temp     = int(req_data['temp'])
+        humidity = int(req_data['humidity'])
+        pressure = int(req_data['pressure'])
+        deviceId = int(req_data['deviceId'])
+        ts       = datetime.datetime.strptime(req_data['ts'], '%Y-%m-%d %H:%M:%S.%f')
+        tsdata = Tsdata(temp=temp,humidity=humidity,pressure=pressure,ts=ts,deviceId=deviceId)
+        tsdata.save()
+        print(f'Data received is Temp:{temp} Humidity:{humidity} pressure:{pressure} ts:{ts}')
+        return '''Temp:{} Humidity:{} Pressure:{} ts:{}'''.format(temp,humidity,pressure,ts)
 
 def add_user_db():
     print("In add_user_db()")
