@@ -28,3 +28,18 @@ class Tsdata(mdb.Document):
                 "ts":self.ts,
                 "deviceId":self.deviceId
                 }
+
+class Devinfo(mdb.Document):
+    meta = {'collection': 'devinfo'}
+    devName   = mdb.StringField()
+    devId     = mdb.IntField()
+    devStatus = mdb.IntField()
+    devType   = mdb.StringField()
+    devVendor = mdb.StringField()
+    def to_json(self):
+        return {"devName": self.devName,
+                "devId": self.devId,
+                "devStatus":self.devStatus,
+                "devType":self.devType,
+                "devVendor":self.devVendor
+                }

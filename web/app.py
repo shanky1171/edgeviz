@@ -7,9 +7,12 @@ from random import sample
 from flask_sqlalchemy import SQLAlchemy
 from config import BaseConfig
 from flask_mongoengine import MongoEngine
+from datetime import datetime
+from datetime import timedelta
 import logging
 import json
 import requests
+
 
 app = Flask(__name__)
 app.config.from_object(BaseConfig)
@@ -29,6 +32,7 @@ mdb.init_app(app)
 
 from forms import LoginForm
 from forms import RegistrationForm
+from forms import ManageForm
 #from models import *
 from nosqlmodels import *
 
@@ -75,6 +79,24 @@ def register():
                 return redirect(url_for('login'))
         return render_template('register.html', title='Regsiter', form=form)
 
+@app.route('/manage', methods=['GET', 'POST'])
+def manage():
+        form = ManageForm()
+        if form.validate_on_submit():
+                dev = Devinfo(
+                        devName=form.devName.data,
+                        devId=form.devId.data,
+                        devStatus=0,
+                        devType=form.devType.data,
+                        devVendor=form.devVendor.data
+                        )
+                dev.save()
+                print("devName: " + form.devName.data)
+                #print("devId: " + form.devId.data)
+                print("devType: " + form.devType.data)
+                print("devVendor: " + form.devVendor.data)
+                return redirect(url_for('manage'))
+        return render_template('manage.html', title='Manage', form=form)
 
 @app.route('/dboard', methods=['GET', 'POST'])
 def dboard():
@@ -84,7 +106,8 @@ def dboard():
 def tdata():
         for temprec in Tsdata.objects(deviceId=1):
             print(f'DeviceID:{temprec.deviceId} Temperature:{temprec.temp} Timestamp:{temprec.ts}')
-        temprecs = Tsdata.objects(deviceId=1).only('temp','ts')
+        tslowlimit = datetime.datetime.now()-timedelta(minutes=1)
+        temprecs = Tsdata.objects(deviceId=1,ts__gte=tslowlimit).only('temp','ts')
         return jsonify({'temprecs':temprecs})
         #return jsonify({'results': sample(range(1,10),5)})
 
