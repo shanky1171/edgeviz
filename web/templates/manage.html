@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div>
+   <h1> Manage  </h1>
+</div>
+<div class="container-fluid">
+   <div class="row">
+      <div class="col-md-4"">
+         <button id="tbutton" align="center" >Add Device</button>
+      </div>
+      <div class="col-md-4"">
+        <button id="tbutton" align="center" >Modify Device</button>
+      </div>
+      <div class="col-md-4"">
+        <button id="tbutton" align="center" >Delete Device</button>
+      </div>
+   </div>
+</div>
+
+<div id="add">
+    <form action="" method="POST">
+      {{ form.hidden_tag() }}
+      <p>
+        {{ form.devName.label }} <br>
+        {{ form.devName(size=32) }}
+        {% for error in form.devName.errors %}
+        <span style="color: red;">[{{error}}]</span>
+        {% endfor %}
+      </p>
+      <p>
+        {{ form.devId.label }} <br>
+        {{ form.devId(size=64) }}
+        {% for error in form.devId.errors %}
+        <span style="color: red;">[{{error}}]</span>
+        {% endfor %}
+      </p>
+      <p>
+        {{ form.devType.label }} <br>
+        {{ form.devType(size=32) }}
+        {% for error in form.devType.errors %}
+        <span style="color: red;">[{{error}}]</span>
+        {% endfor %}
+      </p>
+      <p>
+        {{ form.devVendor.label }} <br>
+        {{ form.devVendor(size=32) }}
+        {% for error in form.devVendor.errors %}
+        <span style="color: red;">[{{error}}]</span>
+        {% endfor %}
+      </p>
+      <p>{{ form.submit() }}</p>
+     </form>
+ </div>
+
+{% endblock %}
