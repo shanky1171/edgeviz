@@ -19,3 +19,13 @@ sudo docker-compose build web
 sudo docker-compose up -d 
 
 
+pyspark --conf "spark.mongodb.input.uri=mongodb://127.0.0.1/edgedb.devinfo?readPreference=primaryPreferred" \
+              --conf "spark.mongodb.output.uri=mongodb://127.0.0.1/edgedb.devinfo" \
+              --packages org.mongodb.spark:mongo-spark-connector_2.11:3.0.0 \
+	  --conf spark.jars.ivy=/opt/bitnami/spark/ivy 
+my_spark = SparkSession \
+.builder \
+.appName("myApp") \
+.config("spark.mongodb.input.uri", "mongodb://127.0.0.1/edgedb.devinfo") \
+.config("spark.mongodb.output.uri", "mongodb://127.0.0.1/edgedb.devinfo ") \
+.getOrCreate()
