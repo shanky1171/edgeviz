@@ -5,7 +5,7 @@ import logging
 import json 
 import requests
 from datetime import datetime as dt
-
+from kafka import KafkaProducer
 
 from opcua import Client
 from opcua import ua
@@ -50,6 +50,9 @@ if __name__ == "__main__":
     varpnm = varp.get_display_name().Text
     print("Object Name is :", varpnm)
 
+    producer = KafkaProducer(bootstrap_servers='localhost:9092',value_serializer=lambda x: json.dumps(x).encode('utf-8'))
+    #producer = KafkaProducer(bootstrap_servers='localhost:9092')
+
     #Get the children that contains the sensor data related to the pump
     pChilds = varp.get_children()
     #print("children of PumpS are: ", pChilds)
@@ -61,29 +64,45 @@ if __name__ == "__main__":
     print(" ") 
 
     #Step 1: Connect to MongoDB - Note: Change connection string as needed
-    mclient = MongoClient("mongodb://mongodbuser:mdb_user@localhost:27017")
-    mdb = mclient.edgedb
+    #mclient = MongoClient("mongodb://mongodbuser:mdb_user@localhost:27017")
+    #mdb = mclient.edgedb
 
     #Loop to fetch values from the OPCUA server for n times
-    for k in range(1,5):
+    for k in range(1,200):
         rec_dict={}
         for pChild in pChilds:
             print("%s=%d;"%(pChild.get_display_name().Text, pChild.get_value()), end=" ")
             key1 = pChild.get_display_name().Text
             val = pChild.get_value()
             rec_dict.update({pChild.get_display_name().Text :pChild.get_value() })
-        #ts = datetime.now()
-        #tstamp = datetime.datetime.strptime(ts, '%Y-%m-%d %H:%M:%S.%f')
-        tsdict = {"ts": dt.utcnow()}
+        tst = dt.now()
+        ts = tst.strftime("%m/%d/%Y %H:%M:%S")
+        #tstamp = dt.strptime(ts, '%Y-%m-%d %H:%M:%S.%f')
+        #tsdict = {"ts": dt.utcnow()}
+        tsdict = {"ts": ts}
         rec_dict.update(tsdict)
         print(" ") 
         print(rec_dict)
+   
+        #Record being sent to multiple destinations 
+
+        #Sending to Kafka broker 
+
+        #Sending to Web Services   
+        jtsdata = json.dumps(rec_dict, indent= 4) 
         #jtsdata = json.dumps(rec_dict, indent= 4, default=myconverter) 
         #print(jtsdata)
-        mdb.tspump.insert_one(rec_dict)
+
+        producer.send('sample', value=rec_dict)
+        producer.flush()
+
         #headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
         #r = requests.post(url, data=jtsdata, headers=headers)
         #print(r.text)
+
+        #Sending to MongoDB directly    
+        #mdb.tspump.insert_one(rec_dict)
+
         time.sleep(2)
 
 
