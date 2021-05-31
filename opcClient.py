@@ -69,6 +69,7 @@ if __name__ == "__main__":
 
     #Loop to fetch values from the OPCUA server for n times
     for k in range(1,200):
+        print("Record #:", k)
         rec_dict={}
         for pChild in pChilds:
             print("%s=%d;"%(pChild.get_display_name().Text, pChild.get_value()), end=" ")

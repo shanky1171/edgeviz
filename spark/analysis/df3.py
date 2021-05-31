@@ -31,31 +31,80 @@ df = ss \
   .option("kafka.bootstrap.servers", "127.0.0.1:9092") \
   .option("subscribe", "sample") \
   .load() 
-#  .select(from_json(col("value").cast("string"), schema).alias("parsed_value"))
-#  .writeStream \
-#  .format("console") \
-#  .outputMode("update") \
-#  .start() \
-#  .awaitTermination()
 
 #df1=df.selectExpr("CAST(key AS STRING)", "CAST(value AS STRING)")
 #df1=df.selectExpr("CAST(value AS STRING)")
 df1 = df.select(from_json(col("value").cast("string"),schema).alias("sensor"))
-#df3 = df1.select(col("sensor.*"))
-df3 = df1.select(avg(col("sensor.current")))
+df3 = df1.select(col("sensor.*"))
+#df3 = df1.select(avg(col("sensor.current")))
+
+df5 = df1.select( \
+                 avg(col("sensor.current")).alias("avg_current"), \
+                 avg(col("sensor.vibration_x")).alias("avg_vib_x"), \
+                 avg(col("sensor.vibration_y")).alias("avg_vib_y"), \
+                 avg(col("sensor.suction_pressure")).alias("avg_suct_pressure"), \
+                 avg(col("sensor.reactor_level")).alias("avg_reactor_lvl"), \
+                 avg(col("sensor.recycle_flow")).alias("avg_recycle_flow"), \
+                 avg(col("sensor.seal_level")).alias("avg_seal_level"), \
+                 avg(col("sensor.hexane_seal_flow")).alias("avg_hexane_seal_fl"), \
+                 avg(col("sensor.level_control")).alias("avg_lvl_control") \
+                 )
+
+df7 = df1.select( \
+                 max(col("sensor.current")).alias("max_current"), \
+                 max(col("sensor.vibration_x")).alias("max_vib_x"), \
+                 max(col("sensor.vibration_y")).alias("max_vib_y"), \
+                 max(col("sensor.suction_pressure")).alias("max_suct_pressure"), \
+                 max(col("sensor.reactor_level")).alias("max_reactor_lvl"), \
+                 max(col("sensor.recycle_flow")).alias("max_recycle_flow"), \
+                 max(col("sensor.seal_level")).alias("max_seal_level"), \
+                 max(col("sensor.hexane_seal_flow")).alias("max_hexane_seal_fl"), \
+                 max(col("sensor.level_control")).alias("max_lvl_control") \
+                 )
+
+
+df9 = df1.select( \
+                 min(col("sensor.current")).alias("min_current"), \
+                 min(col("sensor.vibration_x")).alias("min_vib_x"), \
+                 min(col("sensor.vibration_y")).alias("min_vib_y"), \
+                 min(col("sensor.suction_pressure")).alias("min_suct_pressure"), \
+                 min(col("sensor.reactor_level")).alias("min_reactor_lvl"), \
+                 min(col("sensor.recycle_flow")).alias("min_recycle_flow"), \
+                 min(col("sensor.seal_level")).alias("min_seal_level"), \
+                 min(col("sensor.hexane_seal_flow")).alias("min_hexane_seal_fl"), \
+                 min(col("sensor.level_control")).alias("min_lvl_control") \
+                 )
 
 df3 \
 .writeStream \
 .trigger(processingTime='6 seconds') \
 .option("truncate",'false') \
-.outputMode("update") \
+.outputMode("append") \
 .format("console") \
-.start() \
-.awaitTermination()
+.start() 
 
+df5 \
+.writeStream \
+.trigger(processingTime='6 seconds') \
+.option("truncate",'false') \
+.outputMode("complete") \
+.format("console") \
+.start() 
 
-#ssc = StreamingContext(sc, 10)
+df7 \
+.writeStream \
+.trigger(processingTime='6 seconds') \
+.option("truncate",'false') \
+.outputMode("complete") \
+.format("console") \
+.start() 
 
+df9 \
+.writeStream \
+.trigger(processingTime='6 seconds') \
+.option("truncate",'false') \
+.outputMode("complete") \
+.format("console") \
+.start() 
 
-#ssc.start()
-#ssc.awaitTermination()
+ss.streams.awaitAnyTermination()
