@@ -1,3 +1,4 @@
+from datetime import datetime as dt
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import explode
 from pyspark.sql.functions import split
@@ -5,6 +6,7 @@ from pyspark.sql.functions import *
 from pyspark.sql.types import *
 
 
+#### Create Session   
 ss = SparkSession \
     .builder \
     .appName("StructuredNetworkWordCount") \
@@ -25,6 +27,7 @@ schema = StructType() \
         .add("asset_running_state", IntegerType()) \
         .add("ts", StringType()) 
 
+#### Read Stream Setup Session   
 df = ss \
   .readStream \
   .format("kafka") \
@@ -34,10 +37,89 @@ df = ss \
 
 #df1=df.selectExpr("CAST(key AS STRING)", "CAST(value AS STRING)")
 #df1=df.selectExpr("CAST(value AS STRING)")
-df1 = df.select(from_json(col("value").cast("string"),schema).alias("sensor"))
-df3 = df1.select(col("sensor.*"))
-#df3 = df1.select(avg(col("sensor.current")))
 
+df1 = df.select(from_json(col("value").cast("string"),schema).alias("sensor"))
+df1.printSchema()
+
+df3 = df1.select(col("sensor.*"))
+df3.printSchema()
+
+#### Transformed Incoming Data Source  
+df3 = df3.withColumn("tstamp", to_timestamp(col("ts"), 'MM-dd-yyyy HH:mm:ss'))
+df3.printSchema()
+
+#### Transformed Incoming Data Sink  
+df3 \
+.writeStream \
+.trigger(processingTime='10 seconds') \
+.option("truncate",'false') \
+.outputMode("append") \
+.format("console") \
+.start() 
+
+#### Tumbling Window Sinks - Begin 
+df11 = df3 \
+         .groupby( \
+           window(col("tstamp"), windowDuration="10 seconds") \
+         ) \
+         .min("current","vibration_x","vibration_y", \
+              "suction_pressure", "reactor_level", "recycle_flow", \
+              "seal_level","hexane_seal_flow", "level_control" \
+         ) 
+
+#df11.printSchema()
+
+df15 = df3 \
+         .groupby( \
+           window(col("tstamp"), windowDuration="10 seconds") \
+         ) \
+         .max("current","vibration_x","vibration_y", \
+              "suction_pressure", "reactor_level", "recycle_flow", \
+              "seal_level","hexane_seal_flow", "level_control" \
+         ) 
+#df15.printSchema()
+
+df17 = df3 \
+         .groupby( \
+           window(col("tstamp"), windowDuration="10 seconds") \
+         ) \
+         .avg("current","vibration_x","vibration_y", \
+              "suction_pressure", "reactor_level", "recycle_flow", \
+              "seal_level","hexane_seal_flow", "level_control" \
+         ) 
+#df17.printSchema()
+
+
+
+#### Tumbling Window Sinks - Begin 
+
+df11 \
+.writeStream \
+.trigger(processingTime='10 seconds') \
+.option("truncate",'false') \
+.outputMode("update") \
+.format("console") \
+.start() 
+
+df15 \
+.writeStream \
+.trigger(processingTime='10 seconds') \
+.option("truncate",'false') \
+.outputMode("update") \
+.format("console") \
+.start() 
+
+df17 \
+.writeStream \
+.trigger(processingTime='10 seconds') \
+.option("truncate",'false') \
+.outputMode("update") \
+.format("console") \
+.start() 
+#### Tumbling Window Sinks - End 
+
+
+#### Global Window Aggregations Querues  - Start
 df5 = df1.select( \
                  avg(col("sensor.current")).alias("avg_current"), \
                  avg(col("sensor.vibration_x")).alias("avg_vib_x"), \
@@ -75,36 +157,33 @@ df9 = df1.select( \
                  min(col("sensor.level_control")).alias("min_lvl_control") \
                  )
 
-df3 \
-.writeStream \
-.trigger(processingTime='6 seconds') \
-.option("truncate",'false') \
-.outputMode("append") \
-.format("console") \
-.start() 
+#### Global Window Aggregations  - End
 
-df5 \
-.writeStream \
-.trigger(processingTime='6 seconds') \
-.option("truncate",'false') \
-.outputMode("complete") \
-.format("console") \
-.start() 
 
-df7 \
-.writeStream \
-.trigger(processingTime='6 seconds') \
-.option("truncate",'false') \
-.outputMode("complete") \
-.format("console") \
-.start() 
+#### Global Window Aggregations Sinks  - Start
+#df5 \
+#.writeStream \
+#.trigger(processingTime='10 seconds') \
+#.option("truncate",'false') \
+#.outputMode("update") \
+#.format("console") \
+#.start() 
 
-df9 \
-.writeStream \
-.trigger(processingTime='6 seconds') \
-.option("truncate",'false') \
-.outputMode("complete") \
-.format("console") \
-.start() 
+#df7 \
+#.writeStream \
+#.trigger(processingTime='10 seconds') \
+#.option("truncate",'false') \
+#.outputMode("complete") \
+#.format("console") \
+#.start() 
+#
+#df9 \
+#.writeStream \
+#.trigger(processingTime='10 seconds') \
+#.option("truncate",'false') \
+#.outputMode("complete") \
+#.format("console") \
+#.start() 
+#### Global Window Aggregations Sinks  - End
 
 ss.streams.awaitAnyTermination()

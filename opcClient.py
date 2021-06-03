@@ -68,7 +68,7 @@ if __name__ == "__main__":
     #mdb = mclient.edgedb
 
     #Loop to fetch values from the OPCUA server for n times
-    for k in range(1,200):
+    for k in range(1,int(sys.argv[1])):
         print("Record #:", k)
         rec_dict={}
         for pChild in pChilds:
@@ -77,7 +77,7 @@ if __name__ == "__main__":
             val = pChild.get_value()
             rec_dict.update({pChild.get_display_name().Text :pChild.get_value() })
         tst = dt.now()
-        ts = tst.strftime("%m/%d/%Y %H:%M:%S")
+        ts = tst.strftime("%m-%d-%Y %H:%M:%S")
         #tstamp = dt.strptime(ts, '%Y-%m-%d %H:%M:%S.%f')
         #tsdict = {"ts": dt.utcnow()}
         tsdict = {"ts": ts}
