@@ -10,6 +10,9 @@ from pyspark.sql.types import *
 ss = SparkSession \
     .builder \
     .appName("StructuredNetworkWordCount") \
+    .config("spark.mongodb.input.uri", "mongodb://edgedbuser:edgedb@localhost:27017/edgedb.tspump") \
+    .config("spark.mongodb.output.uri", "mongodb://edgedbuser:edgedb@localhost:27017/edgedb.tspumpO") \
+    .config("spark.jars.packages", "org.mongodb.spark:mongo-spark-connector_2.12:3.0.1") \
     .config("spark.jars.packages", "org.apache.spark:spark-sql-kafka-0-10_2.12:3.1.1") \
     .getOrCreate()
 
@@ -25,13 +28,14 @@ schema = StructType() \
         .add("hexane_seal_flow", IntegerType()) \
         .add("level_control", IntegerType()) \
         .add("asset_running_state", IntegerType()) \
+        .add("devname", StringType()) \
         .add("ts", StringType()) 
 
 #### Read Stream Setup Session   
 df = ss \
   .readStream \
   .format("kafka") \
-  .option("kafka.bootstrap.servers", "127.0.0.1:9092") \
+  .option("kafka.bootstrap.servers", "kafka:9092") \
   .option("subscribe", "sample") \
   .load() 
 

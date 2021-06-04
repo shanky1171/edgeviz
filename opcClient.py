@@ -50,7 +50,7 @@ if __name__ == "__main__":
     varpnm = varp.get_display_name().Text
     print("Object Name is :", varpnm)
 
-    producer = KafkaProducer(bootstrap_servers='localhost:9092',value_serializer=lambda x: json.dumps(x).encode('utf-8'))
+    producer = KafkaProducer(bootstrap_servers='localhost:9093',value_serializer=lambda x: json.dumps(x).encode('utf-8'))
     #producer = KafkaProducer(bootstrap_servers='localhost:9092')
 
     #Get the children that contains the sensor data related to the pump
@@ -79,8 +79,9 @@ if __name__ == "__main__":
         tst = dt.now()
         ts = tst.strftime("%m-%d-%Y %H:%M:%S")
         #tstamp = dt.strptime(ts, '%Y-%m-%d %H:%M:%S.%f')
-        #tsdict = {"ts": dt.utcnow()}
+        devname = {"devname": varpnm}
         tsdict = {"ts": ts}
+        rec_dict.update(devname)
         rec_dict.update(tsdict)
         print(" ") 
         print(rec_dict)
