@@ -12,3 +12,7 @@ COPY spark-token-provider-kafka-0-10_2.12-3.0.1.jar /opt/bitnami/spark/jars/spar
 COPY kafka-clients-2.4.1.jar /opt/bitnami/spark/jars/kafka-clients-2.4.1.jar
 COPY analysis/*.py /analysis/
 COPY log4j.properties /opt/bitnami/spark/conf/log4j.properties
+USER root
+RUN mkdir -p /opt/bitnami/spark/checkpoint/kafka_checkpoint15
+RUN mkdir -p /opt/bitnami/spark/checkpoint/kafka_checkpoint17
+RUN mkdir -p /opt/bitnami/spark/checkpoint/kafka_checkpoint21
