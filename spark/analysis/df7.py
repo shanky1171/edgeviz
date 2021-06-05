@@ -25,6 +25,7 @@ schema = StructType() \
         .add("hexane_seal_flow", IntegerType()) \
         .add("level_control", IntegerType()) \
         .add("asset_running_state", IntegerType()) \
+        .add("devname", StringType()) \
         .add("ts", StringType()) 
 
 #### Read Stream Setup Session   
@@ -71,7 +72,8 @@ df3 \
 
 df15 = df3 \
          .groupby( \
-           window(col("tstamp"), windowDuration="10 seconds") \
+           window(col("tstamp"), windowDuration="10 seconds"), \
+           col("devname")
          ) \
          .min("current","vibration_x","vibration_y", \
               "suction_pressure", "reactor_level", "recycle_flow", \
@@ -80,7 +82,8 @@ df15 = df3 \
 
 df17 = df3 \
          .groupby( \
-           window(col("tstamp"), windowDuration="10 seconds") \
+           window(col("tstamp"), windowDuration="10 seconds"), \
+           col("devname")
          ) \
          .max("current","vibration_x","vibration_y", \
               "suction_pressure", "reactor_level", "recycle_flow", \
@@ -89,7 +92,8 @@ df17 = df3 \
 
 df21 = df3 \
          .groupby( \
-           window(col("tstamp"), windowDuration="10 seconds") \
+           window(col("tstamp"), windowDuration="10 seconds"), \
+           col("devname")
          ) \
          .avg("current","vibration_x","vibration_y", \
               "suction_pressure", "reactor_level", "recycle_flow", \
@@ -148,6 +152,6 @@ qry21 = df21 \
 #### Tumbling Window Sinks - End 
 
 qry15.awaitTermination()
-qry17.awaitTermination()
-qry21.awaitTermination()
+#qry17.awaitTermination()
+#qry21.awaitTermination()
 #ss.streams.awaitAnyTermination()
