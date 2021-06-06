@@ -102,7 +102,23 @@ def manage():
 def dboard():
         return render_template('dboard.html')
 
-@app.route('/tdata', methods=['GET', 'POST'])
+@app.route('/sample/<param>', methods=['GET', 'POST'])
+def sample(param=None):
+        devname=request.args.get('devname')
+        #sample_recs = Tspump.objects(devname=devname).only(param,'ts')
+        sample_recs = Tspump.objects().only(param, 'ts')
+        return jsonify({'sample_recs':sample_recs})
+        #return "The devname is " + devname
+
+@app.route('/minData/<param>', methods=['GET', 'POST'])
+def minData(param=None):
+        devname=request.args.get('devname')
+        #minData_recs = TspumpMin.objects(devname=devname).only(param, 'end_time')
+        minData_recs = TspumpMin.objects().only(param, 'end_time')
+        return jsonify({'minData_recs':minData_recs})
+
+
+app.route('/tdata', methods=['GET', 'POST'])
 def tdata():
         for temprec in Tsdata.objects(deviceId=1):
             print(f'DeviceID:{temprec.deviceId} Temperature:{temprec.temp} Timestamp:{temprec.ts}')

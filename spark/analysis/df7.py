@@ -70,6 +70,7 @@ df3 \
 
 #df11.printSchema()
 
+'''
 df15 = df3 \
          .groupby( \
            window(col("tstamp"), windowDuration="10 seconds"), \
@@ -79,15 +80,40 @@ df15 = df3 \
               "suction_pressure", "reactor_level", "recycle_flow", \
               "seal_level","hexane_seal_flow", "level_control" \
          ) 
+'''
+
+df15 = df3 \
+         .groupby( \
+           window(col("tstamp"), windowDuration="10 seconds"), \
+           col("devname")
+         ) \
+         .agg( \
+           min("current").alias("min_current"), \
+           min("vibration_x").alias("min_vibration_x"), \
+           min("vibration_y").alias("min_vibration_y"), \
+           min("suction_pressure").alias("min_suction_pressure"), \
+           min("reactor_level").alias("min_reactor_level"), \
+           min("recycle_flow").alias("min_recycle_flow"), \
+           min("seal_level").alias("min_seal_level"), \
+           min("hexane_seal_flow").alias("min_hexane_seal_flow"), \
+           min("level_control").alias("min_level_control") \
+         )
 
 df17 = df3 \
          .groupby( \
            window(col("tstamp"), windowDuration="10 seconds"), \
            col("devname")
          ) \
-         .max("current","vibration_x","vibration_y", \
-              "suction_pressure", "reactor_level", "recycle_flow", \
-              "seal_level","hexane_seal_flow", "level_control" \
+         .agg( \
+           max("current").alias("max_current"), \
+           max("vibration_x").alias("max_vibration_x"), \
+           max("vibration_y").alias("max_vibration_y"), \
+           max("suction_pressure").alias("max_suction_pressure"), \
+           max("reactor_level").alias("max_reactor_level"), \
+           max("recycle_flow").alias("max_recycle_flow"), \
+           max("seal_level").alias("max_seal_level"), \
+           max("hexane_seal_flow").alias("max_hexane_seal_flow"), \
+           max("level_control").alias("max_level_control") \
          ) 
 
 df21 = df3 \
@@ -95,9 +121,16 @@ df21 = df3 \
            window(col("tstamp"), windowDuration="10 seconds"), \
            col("devname")
          ) \
-         .avg("current","vibration_x","vibration_y", \
-              "suction_pressure", "reactor_level", "recycle_flow", \
-              "seal_level","hexane_seal_flow", "level_control" \
+         .agg( \
+           avg("current").alias("avg_current"), \
+           avg("vibration_x").alias("avg_vibration_x"), \
+           avg("vibration_y").alias("avg_vibration_y"), \
+           avg("suction_pressure").alias("avg_suction_pressure"), \
+           avg("reactor_level").alias("avg_reactor_level"), \
+           avg("recycle_flow").alias("avg_recycle_flow"), \
+           avg("seal_level").alias("avg_seal_level"), \
+           avg("hexane_seal_flow").alias("avg_hexane_seal_flow"), \
+           avg("level_control").alias("avg_level_control") \
          ) 
 
 #### Tumbling Window Aggregation - End 
@@ -152,6 +185,6 @@ qry21 = df21 \
 #### Tumbling Window Sinks - End 
 
 qry15.awaitTermination()
-#qry17.awaitTermination()
-#qry21.awaitTermination()
+qry17.awaitTermination()
+qry21.awaitTermination()
 #ss.streams.awaitAnyTermination()
