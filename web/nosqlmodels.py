@@ -75,7 +75,7 @@ class TspumpMin(mdb.Document):
     end_time = mdb.DateTimeField()
     def to_json(self):
         return {
-                "min_devname": self.devname,
+                "devname": self.devname,
                 "min_current": self.min_current,
                 "min_vibration_x": self.min_vibration_x,
                 "min_vibration_y": self.min_vibration_y,
@@ -89,6 +89,65 @@ class TspumpMin(mdb.Document):
                 "end_time":self.end_time
                 }
 
+class TspumpMax(mdb.Document):
+    meta = {'collection': 'maxData'}
+    devname  = mdb.StringField()
+    max_current  = mdb.IntField()
+    max_vibration_x  = mdb.IntField()
+    max_vibration_y  = mdb.IntField()
+    max_suction_pressure  = mdb.IntField()
+    max_reactor_level  = mdb.IntField()
+    max_recycle_flow  = mdb.IntField()
+    max_seal_level  = mdb.IntField()
+    max_hexane_seal_flow  = mdb.IntField()
+    max_level_control  = mdb.IntField()
+    start_time = mdb.DateTimeField()
+    end_time = mdb.DateTimeField()
+    def to_json(self):
+        return {
+                "devname": self.devname,
+                "max_current": self.max_current,
+                "max_vibration_x": self.max_vibration_x,
+                "max_vibration_y": self.max_vibration_y,
+                "max_suction_pressure": self.max_suction_pressure,
+                "max_reactor_level": self.max_reactor_level,
+                "max_recycle_flow": self.max_recycle_flow,
+                "max_seal_level": self.max_seal_level,
+                "max_hexane_seal_flow": self.max_hexane_seal_flow,
+                "max_level_control":self.max_level_control,
+                "start_time":self.start_time,
+                "end_time":self.end_time
+                }
+
+class TspumpAvg(mdb.Document):
+    meta = {'collection': 'avgData'}
+    devname  = mdb.StringField()
+    avg_current  = mdb.IntField()
+    avg_vibration_x  = mdb.IntField()
+    avg_vibration_y  = mdb.IntField()
+    avg_suction_pressure  = mdb.IntField()
+    avg_reactor_level  = mdb.IntField()
+    avg_recycle_flow  = mdb.IntField()
+    avg_seal_level  = mdb.IntField()
+    avg_hexane_seal_flow  = mdb.IntField()
+    avg_level_control  = mdb.IntField()
+    start_time = mdb.DateTimeField()
+    end_time = mdb.DateTimeField()
+    def to_json(self):
+        return {
+                "devname": self.devname,
+                "avg_current": self.avg_current,
+                "avg_vibration_x": self.avg_vibration_x,
+                "avg_vibration_y": self.avg_vibration_y,
+                "avg_suction_pressure": self.avg_suction_pressure,
+                "avg_reactor_level": self.avg_reactor_level,
+                "avg_recycle_flow": self.avg_recycle_flow,
+                "avg_seal_level": self.avg_seal_level,
+                "avg_hexane_seal_flow": self.avg_hexane_seal_flow,
+                "avg_level_control":self.avg_level_control,
+                "start_time":self.start_time,
+                "end_time":self.end_time
+                }
 
 class Devinfo(mdb.Document):
     meta = {'collection': 'devinfo'}

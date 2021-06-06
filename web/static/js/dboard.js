@@ -1,24 +1,24 @@
 document.addEventListener('DOMContentLoaded', function() {
   $(document).ready(function(){
-     tChartLoad();
-     hChartLoad();
-     pChartLoad();
+     curChartSampleLoad();
+     curChartMinMaxLoad();
+     //curCharAvgLoad();
   });
 
- setInterval(tChartLoad(),5000);
+ setInterval(curChartSampleLoad(),5000);
 
-    document.getElementById("tbutton").onclick = function() {tChartLoad()};
-    document.getElementById("hbutton").onclick = function() {hChartLoad()};
-    document.getElementById("pbutton").onclick = function() {pChartLoad()};
+    document.getElementById("tbutton").onclick = function() {curChartSampleLoad()};
+    document.getElementById("hbutton").onclick = function() {curChartMinMaxLoad()};
+    //document.getElementById("pbutton").onclick = function() {pChartLoad()};
 
-    function tChartLoad() {
-      var getData = $.get('/tdata');
-      getData.done(function(temprecs){
-        //console.log(temprecs);
-        var tempArr = temprecs.temprecs.map(element => element.temp);
-        console.log(tempArr);
-        var tsArr = temprecs.temprecs.map(element => element.ts.$date);
-        //console.log(tsArr);
+    function curChartSampleLoad() {
+      var getData = $.get('/sample/current');
+      getData.done(function(sample_recs){
+        console.log(sample_recs);
+        var curArr = sample_recs.sample_recs.map(element => element.current);
+        console.log(curArr);
+        var tsArr = sample_recs.sample_recs.map(element => element.ts.$date);
+        console.log(tsArr);
         var cnvTsArr = tsArr.map(function(element){
         var temp = new Date(parseInt(element))
         element = temp.toISOString().substring(11,19)
@@ -26,14 +26,14 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         console.log(cnvTsArr);
 
-        var ctx = document.getElementById('tChart').getContext('2d');
+        var ctx = document.getElementById('curChartSample').getContext('2d');
         var myChart = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: cnvTsArr,
                 datasets: [{
-                    label: 'Temperature',
-                    data: tempArr,
+                    label: 'Current',
+                    data: curArr,
                     borderWidth: 2,
                     borderColor: 'brown',
                     backgroundColor: 'rgba(0, 0, 255, 0.1)',
@@ -44,12 +44,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 responsive: false,
                 title:{
                   display: true,
-                  text: "Temparature time series(Last 1 hr)"
+                  text: "Current time series"
                 },
                 scales: {
                     yAxes: [{
                         ticks: {
-                            beginAtZero: true
+                            beginAtZero: false
                         }
                     }]
                 }
@@ -58,47 +58,82 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     };
 
-    function hChartLoad(){
-      var getData = $.get('/hdata');
-      getData.done(function(humrecs){
-        //console.log(humrecs);
+    function curChartMinMaxLoad(){
+      var maxCurrArr;
+      var avgCurrArr;
 
-        var humArr = humrecs.humrecs.map(element => element.humidity);
-        console.log(humArr);
-        var tsArr = humrecs.humrecs.map(element => element.ts.$date);
-        //console.log(tsArr);
+      var getMaxData = $.get('/maxData/max_current');
+      getMaxData.done(function(maxData_recs){
+        console.log(maxData_recs);
+        maxCurrArr = maxData_recs.maxData_recs.map(element => element.max_current);
+        console.log(maxCurrArr);
+      });
 
-        var cnvTsArr = tsArr.map(function(element){
+      var getAvgData = $.get('/avgData/avg_current');
+      getAvgData.done(function(avgData_recs){
+        console.log(avgData_recs);
+        avgCurrArr = avgData_recs.avgData_recs.map(element => element.avg_current);
+        console.log(avgCurrArr);
+      });
+
+      var getData = $.get('/minData/min_current');
+      getData.done(function(minData_recs){
+        console.log(minData_recs);
+
+        var minCurrArr = minData_recs.minData_recs.map(element => element.min_current);
+        console.log(minCurrArr);
+        var endtsArr = minData_recs.minData_recs.map(element => element.end_time.$date);
+        console.log(endtsArr);
+
+        var cnvEndTsArr = endtsArr.map(function(element){
           var temp = new Date(parseInt(element))
           element = temp.toISOString().substring(11,19)
           return element;
         });
-        console.log(cnvTsArr);
+        console.log(cnvEndTsArr);
 
-        var ctx = document.getElementById('hChart').getContext('2d');
+        var ctx = document.getElementById('curChartMinMax').getContext('2d');
         var myChart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: cnvTsArr,
-                datasets: [{
-                    label: 'Humidity',
-                    data: humArr,
+                labels: cnvEndTsArr,
+                datasets: [
+                  {
+                    label: 'MinCurrent',
+                    data: minCurrArr,
                     borderWidth: 2,
                     borderColor: 'blue',
                     backgroundColor: 'rgba(0,255, 0, 0.1)',
                     fillOpacity: 0.3
-                }]
+                  },
+                  {
+                    label: 'AvgCurrent',
+                    data: avgCurrArr,
+                    borderWidth: 2,
+                    borderColor: 'green',
+                    backgroundColor: 'rgba(150,255, 0, 0.1)',
+                    fillOpacity: 0.3
+                  },
+                  {
+                    label: 'MaxCurrent',
+                    data: maxCurrArr,
+                    borderWidth: 2,
+                    borderColor: 'red',
+                    backgroundColor: 'rgba(0,255, 150, 0.1)',
+                    fillOpacity: 0.3
+                  }
+               ]
             },
             options: {
                 responsive: false,
                 title:{
                   display: true,
-                  text: "Humidity time series(Last 1 hr)"
+                  text: "Aggregation Current Min/Max/Avg time series"
                 },
                 scales: {
                     yAxes: [{
                         ticks: {
-                            beginAtZero: true
+                            beginAtZero: false
                         }
                     }]
                 }
@@ -107,6 +142,7 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     };
 
+/*
     function pChartLoad(){
       var getData = $.get('/pdata');
       getData.done(function(presrecs){
@@ -147,7 +183,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 scales: {
                     yAxes: [{
                         ticks: {
-                            beginAtZero: true
+                            beginAtZero: false
                         }
                     }]
                 }
@@ -155,4 +191,5 @@ document.addEventListener('DOMContentLoaded', function() {
         });
       });
     };
+*/
 });

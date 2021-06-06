@@ -106,17 +106,30 @@ def dboard():
 def sample(param=None):
         devname=request.args.get('devname')
         #sample_recs = Tspump.objects(devname=devname).only(param,'ts')
-        sample_recs = Tspump.objects().only(param, 'ts')
+        sample_recs = Tspump.objects().only('devname',param, 'ts')
         return jsonify({'sample_recs':sample_recs})
         #return "The devname is " + devname
 
 @app.route('/minData/<param>', methods=['GET', 'POST'])
 def minData(param=None):
         devname=request.args.get('devname')
-        #minData_recs = TspumpMin.objects(devname=devname).only(param, 'end_time')
-        minData_recs = TspumpMin.objects().only(param, 'end_time')
+        #minData_recs = TspumpMin.objects(devname=devname).only('devname',param, 'end_time')
+        minData_recs = TspumpMin.objects().only('devname', param, 'end_time')
         return jsonify({'minData_recs':minData_recs})
 
+@app.route('/maxData/<param>', methods=['GET', 'POST'])
+def maxData(param=None):
+        devname=request.args.get('devname')
+        #maxData_recs = TspumpMax.objects(devname=devname).only('devname',param, 'end_time')
+        maxData_recs = TspumpMax.objects().only('devname', param, 'end_time')
+        return jsonify({'maxData_recs':maxData_recs})
+
+@app.route('/avgData/<param>', methods=['GET', 'POST'])
+def avgData(param=None):
+        devname=request.args.get('devname')
+        #avgData_recs = TspumpAvg.objects(devname=devname).only('devname',param, 'end_time')
+        avgData_recs = TspumpAvg.objects().only('devname', param, 'end_time')
+        return jsonify({'avgData_recs':avgData_recs})
 
 app.route('/tdata', methods=['GET', 'POST'])
 def tdata():
