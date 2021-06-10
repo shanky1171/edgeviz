@@ -5,14 +5,14 @@ document.addEventListener('DOMContentLoaded', function() {
      plotlyLoad();
   });
 
- setInterval(curChartSampleLoad(),5000);
+    var refc=setInterval(curChartSampleLoad,5000);
+    var refagg=setInterval(curChartMinMaxLoad,5000);
 
     document.getElementById("tbutton").onclick = function() {curChartSampleLoad()};
     document.getElementById("hbutton").onclick = function() {curChartMinMaxLoad()};
-    //document.getElementById("pbutton").onclick = function() {pChartLoad()};
 
     function curChartSampleLoad() {
-      var getData = $.get('/sample/current');
+      var getData = $.get('/sample/current?devname=Pump1');
       getData.done(function(sample_recs){
         console.log(sample_recs);
         var curArr = sample_recs.sample_recs.map(element => element.current);
@@ -62,21 +62,21 @@ document.addEventListener('DOMContentLoaded', function() {
       var maxCurrArr;
       var avgCurrArr;
 
-      var getMaxData = $.get('/maxData/max_current');
+      var getMaxData = $.get('/maxData/max_current?devname=Pump1');
       getMaxData.done(function(maxData_recs){
         console.log(maxData_recs);
         maxCurrArr = maxData_recs.maxData_recs.map(element => element.max_current);
         console.log(maxCurrArr);
       });
 
-      var getAvgData = $.get('/avgData/avg_current');
+      var getAvgData = $.get('/avgData/avg_current?devname=Pump1');
       getAvgData.done(function(avgData_recs){
         console.log(avgData_recs);
         avgCurrArr = avgData_recs.avgData_recs.map(element => element.avg_current);
         console.log(avgCurrArr);
       });
 
-      var getData = $.get('/minData/min_current');
+      var getData = $.get('/minData/min_current?devname=Pump1');
       getData.done(function(minData_recs){
         console.log(minData_recs);
 
