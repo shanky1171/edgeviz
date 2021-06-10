@@ -15,15 +15,17 @@ document.addEventListener('DOMContentLoaded', function() {
       var getData = $.get('/sample/current?devname=Pump1');
       getData.done(function(sample_recs){
         console.log(sample_recs);
-        var curArr = sample_recs.sample_recs.map(element => element.current);
+        var rcurArr = sample_recs.sample_recs.map(element => element.current);
+        curArr = rcurArr.reverse();
         console.log(curArr);
         var tsArr = sample_recs.sample_recs.map(element => element.ts.$date);
         console.log(tsArr);
-        var cnvTsArr = tsArr.map(function(element){
+        var rcnvTsArr = tsArr.map(function(element){
         var temp = new Date(parseInt(element))
         element = temp.toISOString().substring(11,19)
         return element;
         });
+        cnvTsArr = rcnvTsArr.reverse();
         console.log(cnvTsArr);
 
         var ctx = document.getElementById('curChartSample').getContext('2d');
@@ -65,14 +67,16 @@ document.addEventListener('DOMContentLoaded', function() {
       var getMaxData = $.get('/maxData/max_current?devname=Pump1');
       getMaxData.done(function(maxData_recs){
         console.log(maxData_recs);
-        maxCurrArr = maxData_recs.maxData_recs.map(element => element.max_current);
+        rmaxCurrArr = maxData_recs.maxData_recs.map(element => element.max_current);
+        maxCurrArr = rmaxCurrArr.reverse();
         console.log(maxCurrArr);
       });
 
       var getAvgData = $.get('/avgData/avg_current?devname=Pump1');
       getAvgData.done(function(avgData_recs){
         console.log(avgData_recs);
-        avgCurrArr = avgData_recs.avgData_recs.map(element => element.avg_current);
+        ravgCurrArr = avgData_recs.avgData_recs.map(element => element.avg_current);
+        avgCurrArr = ravgCurrArr.reverse()
         console.log(avgCurrArr);
       });
 
@@ -80,16 +84,18 @@ document.addEventListener('DOMContentLoaded', function() {
       getData.done(function(minData_recs){
         console.log(minData_recs);
 
-        var minCurrArr = minData_recs.minData_recs.map(element => element.min_current);
+        var rminCurrArr = minData_recs.minData_recs.map(element => element.min_current);
+        minCurrArr = rminCurrArr.reverse();
         console.log(minCurrArr);
         var endtsArr = minData_recs.minData_recs.map(element => element.end_time.$date);
         console.log(endtsArr);
 
-        var cnvEndTsArr = endtsArr.map(function(element){
+        var rcnvEndTsArr = endtsArr.map(function(element){
           var temp = new Date(parseInt(element))
           element = temp.toISOString().substring(11,19)
           return element;
         });
+        cnvEndTsArr = rcnvEndTsArr.reverse()
         console.log(cnvEndTsArr);
 
         var ctx = document.getElementById('curChartMinMax').getContext('2d');
