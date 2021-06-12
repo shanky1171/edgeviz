@@ -1,18 +1,98 @@
 document.addEventListener('DOMContentLoaded', function() {
   $(document).ready(function(){
-     curChartSampleLoad();
-     curChartMinMaxLoad();
-     plotlyLoad();
+     //curChartSampleLoad(devSelected);
+     //curChartMinMaxLoad(devSelected);
+     c_spml_plotlyLoad(devSelected);
+  });
+    
+  window.devSelected = 'Pump1';
+
+  document.querySelector('#dev1').addEventListener('click',function() {
+    window.devSelected = document.getElementById("dev1").getAttribute("value");
+    console.log(devSelected);
   });
 
-    var refc=setInterval(curChartSampleLoad,5000);
-    var refagg=setInterval(curChartMinMaxLoad,5000);
+  document.querySelector('#dev3').addEventListener('click',function() {
+    window.devSelected = document.getElementById("dev3").getAttribute("value");
+    console.log(devSelected);
+  });
 
-    document.getElementById("tbutton").onclick = function() {curChartSampleLoad()};
-    document.getElementById("hbutton").onclick = function() {curChartMinMaxLoad()};
 
-    function curChartSampleLoad() {
-      var getData = $.get('/sample/current?devname=Pump1');
+  //var refc=setInterval(curChartSampleLoad,5000, window.devSelected);
+  //var refagg=setInterval(curChartMinMaxLoad,5000);
+  var prefc=setInterval(c_smpl_plotlyLoad,5000, window.devSelected);
+
+
+  function c_smpl_plotlyLoad(devname){
+      if(devname === undefined){
+           devname = 'Pump1';
+      };
+      devname = window.devSelected;
+      console.log(devname);
+
+      var getData = $.get('/sample/current?devname='+ devname);
+
+      getData.done(function(sample_recs){
+        console.log(sample_recs);
+        var rcurArr = sample_recs.sample_recs.map(element => element.current);
+        curArr = rcurArr.reverse();
+        console.log(curArr);
+        var tsArr = sample_recs.sample_recs.map(element => element.ts.$date);
+        console.log(tsArr);
+        var rcnvTsArr = tsArr.map(function(element){
+            var temp = new Date(parseInt(element))
+            element = temp.toISOString().substring(11,19)
+            return element;
+        });
+        cnvTsArr = rcnvTsArr.reverse();
+        console.log(cnvTsArr);
+
+	TESTER = document.getElementById('curSampl');
+        var trace1 = {
+            y: curArr,
+            x: cnvTsArr,
+            mode: 'lines+markers',
+            name: 'Lines',
+            marker: {
+              color: 'rgb(128, 0, 128)',
+              size: 4
+            },
+            line: {
+              color: 'white',
+              width: 1
+            }
+        };
+        var data = [trace1];
+        var layout = {
+          width: 700,
+          height: 500,
+          title:'Time Series-Current(' + devname +')',
+          xaxis: {
+            automargin: true,
+            title: 'Time'
+          },
+          yaxis: {
+            automargin: true,
+            title: 'Current(Amps)'
+          },
+          plot_bgcolor:"black",
+          //paper_bgcolor:"#FFF3"
+        };
+	Plotly.newPlot( TESTER, data, layout);
+     });
+  }; //End of PlotlyLoad
+
+// End of Main Function 
+});
+
+/*
+    function curChartSampleLoad(devname) {
+      if(devname === undefined){
+           devname = 'Pump1';
+      };
+      devname = window.devSelected;
+      console.log(devname);
+      var getData = $.get('/sample/current?devname='+ devname);
       getData.done(function(sample_recs){
         console.log(sample_recs);
         var rcurArr = sample_recs.sample_recs.map(element => element.current);
@@ -46,7 +126,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 responsive: false,
                 title:{
                   display: true,
-                  text: "Current time series"
+                  text: "Current time series(" + window.devSelected + ")"
                 },
                 scales: {
                     yAxes: [{
@@ -60,11 +140,17 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     };
 
-    function curChartMinMaxLoad(){
+    function curChartMinMaxLoad(devname){
       var maxCurrArr;
       var avgCurrArr;
 
-      var getMaxData = $.get('/maxData/max_current?devname=Pump1');
+      if(devname === undefined){
+           devname = 'Pump1';
+      };
+      devname = window.devSelected;
+      console.log(devname);
+
+      var getMaxData = $.get('/maxData/max_current?devname='+ devname);
       getMaxData.done(function(maxData_recs){
         console.log(maxData_recs);
         rmaxCurrArr = maxData_recs.maxData_recs.map(element => element.max_current);
@@ -72,7 +158,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log(maxCurrArr);
       });
 
-      var getAvgData = $.get('/avgData/avg_current?devname=Pump1');
+      var getAvgData = $.get('/avgData/avg_current?devname='+ devname);
       getAvgData.done(function(avgData_recs){
         console.log(avgData_recs);
         ravgCurrArr = avgData_recs.avgData_recs.map(element => element.avg_current);
@@ -80,7 +166,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log(avgCurrArr);
       });
 
-      var getData = $.get('/minData/min_current?devname=Pump1');
+      var getData = $.get('/minData/min_current?devname='+ devname);
       getData.done(function(minData_recs){
         console.log(minData_recs);
 
@@ -134,64 +220,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 responsive: false,
                 title:{
                   display: true,
-                  text: "Aggregation Current Min/Max/Avg time series"
-                },
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: false
-                        }
-                    }]
-                }
-            }
-        });
-      });
-    };
-
-    function plotlyLoad(){
-	TESTER = document.getElementById('tester');
-	Plotly.newPlot( TESTER, [{
-	x: [1, 2, 3, 4, 5],
-	y: [1, 2, 4, 8, 16] }], {
-	margin: { t: 0 } } );
-    };
-/*
-    function pChartLoad(){
-      var getData = $.get('/pdata');
-      getData.done(function(presrecs){
-        //console.log(presrecs);
-
-        var presArr = presrecs.presrecs.map(element => element.pressure);
-        console.log(presArr);
-        var tsArr = presrecs.presrecs.map(element => element.ts.$date);
-        //console.log(tsArr);
-
-        var cnvTsArr = tsArr.map(function(element){
-        var temp = new Date(parseInt(element))
-        element = temp.toISOString().substring(11,19)
-        return element;
-        });
-        console.log(cnvTsArr);
-
-        var ctx = document.getElementById('pChart').getContext('2d');
-        var myChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: cnvTsArr,
-                datasets: [{
-                    label: 'Pressure',
-                    data: presArr,
-                    borderWidth: 2,
-                    borderColor: 'green',
-                    backgroundColor: 'rgba(255, 0, 0, 0.1)',
-                    fillOpacity: 0.3
-                }]
-            },
-            options: {
-                responsive: false,
-                title:{
-                  display: true,
-                  text: "Pressure time series(Last 1 hr)"
+                  text: "Aggregation Current Min/Max/Avg time series(" + window.devSelected + ")"
                 },
                 scales: {
                     yAxes: [{
@@ -205,4 +234,3 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     };
 */
-});
