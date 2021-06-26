@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div>
+   <h1> Dashboard </h1>
+</div>
+
+<div class="container-fluid">
+   <div class="row">
+      <button id="dev1" value="Pump1">Pump1</button>
+      <button id="dev3" value="Pump3">Pump3</button>
+   </div>
+   <div class="row">
+      <div class="col-md-6" id ="curSampl"></div>
+      <div class="col-md-6" id ="curAgg"></div>
+   </div>
+<!--   <div class="row">
+       <div class="col-md-4"">
+         <canvas id="curChartSample" width="600px" height="400px"></canvas>
+      </div>
+      <div class="col-md-4"">
+         <canvas id="curChartMinMax" width="600px" height="400px"></canvas>
+      </div>
+   </div> 
+-->
+</div>
+
+{% endblock %}

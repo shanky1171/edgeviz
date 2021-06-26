@@ -63,7 +63,7 @@ def login():
             flash('Login has Failed!!!')
             return render_template('login.html', title='Sign In', form=form)
         #flash('Login is Successful!!!')
-        return render_template('dboard.html', title='Main Application')
+        return render_template('start.html', title='Main Application')
     return render_template('login.html', title='Sign In', form=form)
 
 @app.route('/register', methods=['GET', 'POST'])

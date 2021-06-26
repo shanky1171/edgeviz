@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div style="width: 50%; float:left; height:100%; background:white; margin:0px; align-content: center;">
+   <img src="{{url_for('static', filename='images/Edgecomputing.jpg')}}" width="100%" height="100%"> 
+</div>
+<div style="width: 40%; float:left; height:100%; background:white; margin:0px; align-content: center; padding: 20% 10% 10% 10%">
   <h1> Sign In </h1>
   <form action="" method="POST" novalidate>
     {{ form.hidden_tag() }}
@@ -22,5 +26,6 @@
     <p>{{ form.submit() }}</p>
    </form>
     <p>New User? <a href="{{ url_for('register') }}">Click to Register!</a></p>
+</div>
   {% endblock %}
 
